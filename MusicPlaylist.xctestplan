@@ -1,0 +1,38 @@
+{
+  "configurations" : [
+    {
+      "id" : "1EFC31BC-E0DE-4F3E-B5BE-F1EE89CA484E",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:MusicPlaylist.xcodeproj",
+      "identifier" : "031C848F2E13B6D500785C1E",
+      "name" : "MusicPlaylist"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MusicPlaylist.xcodeproj",
+        "identifier" : "031C849F2E13B6D700785C1E",
+        "name" : "MusicPlaylistTests"
+      }
+    },
+    {
+      "enabled" : false,
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:MusicPlaylist.xcodeproj",
+        "identifier" : "031C84A92E13B6D700785C1E",
+        "name" : "MusicPlaylistUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

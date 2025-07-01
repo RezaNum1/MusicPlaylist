@@ -25,17 +25,18 @@ extension PlaylistView {
         init(musics: [Music] = [], repository: MusicRepository = MusicRepositoryImpl()) {
             self.musics = musics
             self.repository = repository
-            self.getMusics()
+            Task {
+                await self.getMusics()
+            }
         }
 
-        func getMusics() {
-            Task {
-                do {
-                    self.musics = try await self.repository.getAllMusics()
-                    self.viewState = .success
-                } catch {
-                    self.errorHandler(error: error)
-                }
+        func getMusics() async {
+            do {
+                self.musics = try await self.repository.getAllMusics()
+                print(musics.count)
+                self.viewState = .success
+            } catch {
+                self.errorHandler(error: error)
             }
         }
 

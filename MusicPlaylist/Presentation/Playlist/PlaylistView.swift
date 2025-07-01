@@ -24,7 +24,7 @@ struct PlaylistView: View {
                     ProgressView()
 
                 case .error(let errorMessage):
-                    ErrorStateView(message: errorMessage, action: { viewModel.getMusics() })
+                    ErrorStateView(message: errorMessage, action: { Task { await viewModel.getMusics() } })
 
                 case .success:
                     PlaylistContentView(musics: viewModel.searchResult, activeMusic: audioPlayerVM.activeMusic) { selectedSong in
