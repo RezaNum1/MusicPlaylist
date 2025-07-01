@@ -8,11 +8,9 @@
 import SwiftUI
 
 struct PlaylistView: View {
+    @EnvironmentObject var viewModel: PlaylistViewModel
+
     var body: some View {
         Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
     }
-}
-
-#Preview {
-    PlaylistView()
 }

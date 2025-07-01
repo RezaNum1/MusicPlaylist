@@ -9,9 +9,11 @@ import SwiftUI
 
 @main
 struct MusicPlaylistApp: App {
+    @StateObject var playlistVM: PlaylistView.PlaylistViewModel = .init()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            PlaylistView()
+                .environmentObject(self.playlistVM)
         }
     }
 }

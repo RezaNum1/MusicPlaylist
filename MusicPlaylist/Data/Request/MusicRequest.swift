@@ -7,4 +7,7 @@
 
 import Foundation
 
-struct MusicRequest: Request { }
+struct MusicRequest: Request {
+    typealias ReturnType = MusicResponse
+    var url: String = "https://api.deezer.com/search?q=taylor+swift"
+}
