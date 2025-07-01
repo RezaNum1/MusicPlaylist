@@ -16,10 +16,9 @@ struct HeaderSectionView: View {
             TextField("Search Artist", text: $keyword)
                 .frame(height: 40)
                 .frame(maxWidth: .infinity)
-                .padding([.leading, .trailing], 10)
                 .textFieldStyle(.roundedBorder)
                 .padding(.horizontal, 24)
         }
-        .frame(height: 80)
+        .frame(height: 60)
     }
 }

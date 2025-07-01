@@ -10,10 +10,15 @@ import SwiftUI
 extension PlaylistView {
     @MainActor
     class PlaylistViewModel: ObservableObject {
-        @Published var musics: [Music] = []
+        @Published var musics: [Music] = [] {
+            didSet {
+                self.searchResult = musics
+            }
+        }
         var repository: MusicRepository
         @Published var viewState: ViewState = .loading
         @Published private(set) var activeMusic: Music? = nil
+        @Published var searchResult: [Music] = []
 
         init(musics: [Music] = [], repository: MusicRepository = MusicRepositoryImpl()) {
             self.musics = musics
@@ -45,6 +50,10 @@ extension PlaylistView {
             }
 
             viewState = .error("")
+        }
+
+        func searchMusic(keyword: String) {
+            searchResult = keyword == "" ? musics : musics.filter { $0.artistName.lowercased().contains(keyword) }
         }
     }
 }

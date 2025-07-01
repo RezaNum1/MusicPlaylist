@@ -22,6 +22,7 @@ struct PlaylistContentView: View {
                         }
                 }
             }
+            .padding(.bottom, activeMusic != nil ? 100 : 0)
         }
         .frame(maxHeight: .infinity)
     }

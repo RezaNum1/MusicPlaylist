@@ -27,7 +27,7 @@ struct PlaylistView: View {
                 case .error(let errorMessage):
                     Text(errorMessage)
                 case .success:
-                    PlaylistContentView(musics: viewModel.musics, activeMusic: viewModel.activeMusic) { selectedSong in
+                    PlaylistContentView(musics: viewModel.searchResult, activeMusic: viewModel.activeMusic) { selectedSong in
                         self.viewModel.onTapMusic(data: selectedSong)
                     }
                 }
@@ -35,12 +35,17 @@ struct PlaylistView: View {
                 Spacer()
             }
 
-            MusicControlView(isPlayed: $isPlayed, sliderValue: $sliderValue,
-                             playAndPauseAction: { isPlayed.toggle() },
-                             nextAction: { print("Next") },
-                             previousAction: { print("Previous") }
-            )
-            .frame(alignment: .bottom)
+            if viewModel.activeMusic != nil {
+                MusicControlView(isPlayed: $isPlayed, sliderValue: $sliderValue,
+                                 playAndPauseAction: { isPlayed.toggle() },
+                                 nextAction: { print("Next") },
+                                 previousAction: { print("Previous") }
+                )
+                .frame(alignment: .bottom)
+            }
+        }
+        .onChange(of: keyword) { _, newValue in
+            self.viewModel.searchMusic(keyword: newValue)
         }
         .edgesIgnoringSafeArea(.bottom)
     }

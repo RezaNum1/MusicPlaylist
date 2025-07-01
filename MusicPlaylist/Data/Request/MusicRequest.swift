@@ -9,5 +9,5 @@ import Foundation
 
 struct MusicRequest: Request {
     typealias ReturnType = MusicResponse
-    var url: String = "https://api.deezer.com/search?q=taylor+swift"
+    var url: String = "https://api.deezer.com/search?q=b"
 }
