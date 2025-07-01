@@ -6,7 +6,6 @@
 //
 
 enum ViewState {
-    case empty
     case success
     case error(String)
     case loading

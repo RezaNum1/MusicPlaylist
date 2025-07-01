@@ -10,6 +10,7 @@ import SwiftUI
 struct ButtonIconView: View {
     let systemName: String
     let size: CGSize
+    var color: Color = Color.black
     let onTapAction: () -> Void
 
     var body: some View {
@@ -18,9 +19,8 @@ struct ButtonIconView: View {
         } label: {
             Image(systemName: systemName)
                 .resizable()
-                .foregroundColor(Color.black)
+                .foregroundColor(color)
                 .frame(width: size.width, height: size.height)
         }
-
     }
 }

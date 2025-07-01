@@ -9,4 +9,6 @@ import Foundation
 
 enum NetworkRequestError: Error, LocalizedError {
     case invalidRequest
+    case decodingError
+    case maintenance
 }

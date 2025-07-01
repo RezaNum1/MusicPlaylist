@@ -65,7 +65,8 @@ struct MusicResponse: Codable {
                 title: self.title ?? "",
                 artistName: self.artist?.name ?? "",
                 albumName: self.album?.title ?? "",
-                imageURL: self.imageURL ?? ""
+                imageURL: self.imageURL ?? "",
+                audioURL: self.audioURL ?? ""
             )
         }
     }

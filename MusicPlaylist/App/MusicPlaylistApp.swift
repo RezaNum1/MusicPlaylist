@@ -10,10 +10,13 @@ import SwiftUI
 @main
 struct MusicPlaylistApp: App {
     @StateObject var playlistVM: PlaylistView.PlaylistViewModel = .init()
+    @StateObject var audioPlayerVM: AudioPlayerViewModel = .init()
+
     var body: some Scene {
         WindowGroup {
             PlaylistView()
                 .environmentObject(self.playlistVM)
+                .environmentObject(self.audioPlayerVM)
         }
     }
 }

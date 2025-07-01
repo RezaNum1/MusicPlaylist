@@ -10,9 +10,13 @@ import SwiftUI
 struct MusicControlView: View {
     @Binding var isPlayed: Bool
     @Binding var sliderValue: Double
+    @Binding var durationValue: Double
+    var isNextDisabled: Bool
+    var isPreviousDisabled: Bool
     let playAndPauseAction: () -> Void
     let nextAction: () -> Void
     let previousAction: () -> Void
+    let seekToAction: () -> Void
 
     var body: some View {
         VStack {
@@ -33,9 +37,10 @@ struct MusicControlView: View {
     var topSection: some View {
         HStack {
             Spacer()
-            ButtonIconView(systemName: "backward.end.alt.fill", size: .init(width: 30, height: 20)) {
+            ButtonIconView(systemName: "backward.end.alt.fill", size: .init(width: 30, height: 20), color: isPreviousDisabled ? Color.gray : Color.black) {
                 previousAction()
             }
+            .disabled(isPreviousDisabled)
 
             Spacer()
 
@@ -51,16 +56,21 @@ struct MusicControlView: View {
 
             Spacer()
 
-            ButtonIconView(systemName: "forward.end.alt.fill", size: .init(width: 30, height: 20)) {
+            ButtonIconView(systemName: "forward.end.alt.fill", size: .init(width: 30, height: 20), color: isNextDisabled ? Color.gray : Color.black) {
                 nextAction()
             }
+            .disabled(isNextDisabled)
 
             Spacer()
         }
     }
 
     var bottomSection: some View {
-        Slider(value: $sliderValue, in: 0...10)
+        Slider(value: $sliderValue, in: 0...durationValue, onEditingChanged: { editing in
+            if !editing {
+                self.seekToAction()
+            }
+        })
             .padding(.horizontal, 16)
             .padding(.bottom, 8)
     }

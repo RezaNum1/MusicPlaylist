@@ -9,9 +9,9 @@ import SwiftUI
 
 struct PlaylistView: View {
     @EnvironmentObject var viewModel: PlaylistViewModel
+    @EnvironmentObject var audioPlayerVM: AudioPlayerViewModel
+    @StateObject private var toast = ToastManager.shared
     @State var keyword: String = ""
-    @State var isPlayed: Bool = false
-    @State var sliderValue: Double = 0.0
 
     var body: some View {
         ZStack {
@@ -20,29 +20,41 @@ struct PlaylistView: View {
                     .padding(.bottom, 4)
 
                 switch self.viewModel.viewState {
-                case .empty:
-                    EmptyView()
                 case .loading:
                     ProgressView()
+
                 case .error(let errorMessage):
-                    Text(errorMessage)
+                    ErrorStateView(message: errorMessage, action: { viewModel.getMusics() })
+
                 case .success:
-                    PlaylistContentView(musics: viewModel.searchResult, activeMusic: viewModel.activeMusic) { selectedSong in
-                        self.viewModel.onTapMusic(data: selectedSong)
+                    PlaylistContentView(musics: viewModel.searchResult, activeMusic: audioPlayerVM.activeMusic) { selectedSong in
+                        self.audioPlayerVM.loadAudio(data: selectedSong)
                     }
                 }
 
                 Spacer()
             }
 
-            if viewModel.activeMusic != nil {
-                MusicControlView(isPlayed: $isPlayed, sliderValue: $sliderValue,
-                                 playAndPauseAction: { isPlayed.toggle() },
-                                 nextAction: { print("Next") },
-                                 previousAction: { print("Previous") }
+            // Music Control
+            if audioPlayerVM.activeMusic != nil {
+                MusicControlView(isPlayed: $audioPlayerVM.isPlaying,
+                                 sliderValue: $audioPlayerVM.currentTime,
+                                 durationValue: $audioPlayerVM.duration,
+                                 isNextDisabled: audioPlayerVM.activeMusic == viewModel.musics.last,
+                                 isPreviousDisabled: audioPlayerVM.activeMusic == viewModel.musics.first,
+                                 playAndPauseAction: { audioPlayerVM.togglePlayPause() },
+                                 nextAction: { audioPlayerVM.next(data: self.viewModel.musics) },
+                                 previousAction: { audioPlayerVM.previous(data: self.viewModel.musics) },
+                                 seekToAction: { self.audioPlayerVM.seek(to: audioPlayerVM.currentTime) }
                 )
                 .frame(alignment: .bottom)
             }
+
+            // Toast For Error
+            if toast.isShowing {
+                ToastView(isShowing: $toast.isShowing, message: toast.message)
+            }
+
         }
         .onChange(of: keyword) { _, newValue in
             self.viewModel.searchMusic(keyword: newValue)

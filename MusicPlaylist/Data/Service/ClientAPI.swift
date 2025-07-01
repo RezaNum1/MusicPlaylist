@@ -61,7 +61,7 @@ struct ClientAPI: ClientAPIProtocol {
             let response = try JSONDecoder().decode(R.ReturnType.self, from: data)
             return response
         } catch {
-            throw error
+            throw NetworkRequestError.decodingError
         }
     }
 }

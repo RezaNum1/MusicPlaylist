@@ -17,8 +17,7 @@ class MusicRepositoryImpl: MusicRepository {
     func getAllMusics() async throws -> [Music] {
         do {
             let response = try await clientApi.dispatch(MusicRequest())
-            let musics = response.data.map { $0.toModel }
-            return musics.count > 10 ? Array(musics[0...9]) : musics // Limit Contents
+            return response.data.map { $0.toModel }
         } catch {
             throw error
         }

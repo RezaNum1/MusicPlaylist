@@ -13,4 +13,5 @@ struct Music: Equatable, Identifiable {
     var artistName: String
     var albumName: String
     var imageURL: String
+    var audioURL: String
 }
