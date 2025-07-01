@@ -13,6 +13,7 @@ extension PlaylistView {
         @Published var musics: [Music] = []
         var repository: MusicRepository
         @Published var viewState: ViewState = .loading
+        @Published private(set) var activeMusic: Music? = nil
 
         init(musics: [Music] = [], repository: MusicRepository = MusicRepositoryImpl()) {
             self.musics = musics
@@ -29,6 +30,10 @@ extension PlaylistView {
                     self.errorHandler(error: error)
                 }
             }
+        }
+
+        func onTapMusic(data: Music) {
+            self.activeMusic = data
         }
 
         private func errorHandler(error: Error) {
