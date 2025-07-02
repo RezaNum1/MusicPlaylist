@@ -1,0 +1,76 @@
+name: iOS Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  unit-tests:
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Xcode
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Install jq (for parsing JSON coverage)
+        run: brew install jq
+
+      - name: Find Latest iOS 18 Runtime
+        id: find-runtime
+        run: |
+          RUNTIME=$(xcrun simctl list runtimes -j | \
+            jq -r '.runtimes[] | select(.name | contains("iOS")) | select(.isAvailable == true) | select(.version | startswith("18")) | .identifier' | tail -1)
+          if [ -z "$RUNTIME" ]; then
+            echo "::error::iOS 18 runtime not found. Available runtimes:"
+            xcrun simctl list runtimes
+            exit 1
+          fi
+          echo "RUNTIME=$RUNTIME" >> $GITHUB_OUTPUT
+          echo "Using runtime: $RUNTIME"
+
+      - name: Create and Boot Simulator
+        run: |
+          xcrun simctl delete "CI-Test-Device" || true
+          SIM_UDID=$(xcrun simctl create "CI-Test-Device" "iPhone 15" "${{ steps.find-runtime.outputs.RUNTIME }}")
+          xcrun simctl boot "$SIM_UDID"
+          echo "SIM_UDID=$SIM_UDID" >> $GITHUB_ENV
+
+      - name: Run Unit Tests with Code Coverage
+        run: |
+          xcodebuild test \
+            -project MusicPlaylist.xcodeproj \
+            -scheme "MusicPlaylist" \
+            -destination "platform=iOS Simulator,id=${{ env.SIM_UDID }}" \
+            -derivedDataPath ./build \
+            CODE_SIGNING_REQUIRED=NO \
+            ENABLE_TESTABILITY=YES \
+            -enableCodeCoverage YES \
+            -quiet
+
+      - name: Generate Code Coverage Report (JSON)
+        run: |
+          mkdir -p coverage
+          xcrun xccov view --report --json build/Logs/Test/*.xcresult > coverage/coverage.json
+
+      - name: Extract Total Coverage Percentage
+        id: coverage
+        run: |
+          COVERAGE=$(jq '[.targets[].lineCoverage] | add / length * 100' coverage/coverage.json)
+          echo "TOTAL_COVERAGE=$(printf "%.2f" "$COVERAGE")" >> $GITHUB_OUTPUT
+          echo "Total Coverage: $(printf "%.2f" "$COVERAGE")%"
+
+      - name: Show Coverage in GitHub Summary
+        run: |
+          echo "### ✅ Code Coverage Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Total Line Coverage:** ${{ steps.coverage.outputs.TOTAL_COVERAGE }}%" >> $GITHUB_STEP_SUMMARY
+
+      - name: Upload Test Results and Coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: |
+            build/Logs/Test/*.xcresult
+            coverage/coverage.json
